@@ -1,3 +1,38 @@
+<?php
+session_start();
+$post = $_SESSION['form'];
+
+// 入力画面からのアクセスでなければ、戻す
+if(!isset($_SESSION['form'])){
+    header('Location: index.php');
+    exit();
+} else {
+    $post = $_SESSION['form'];
+}
+
+if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // メールを送信する
+    $to = 'me@example.com';
+    $from = $post['email'];
+    $subject = 'お問い合わせが届きました';
+    $body = <<<EOT
+名前: {$post['name']}
+メールアドレス: {$post['email']}
+内容:
+{$post['contact']}
+EOT;
+    // var_dump($body);
+    // exit();
+    // mb_send_mail($to, $subject, $body, "From: {$from}");
+
+    // セッションを消してお礼画面へ
+    unset($_SESSION['form']);
+    header('Location: thanks.html');
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -17,7 +52,7 @@
                         <label for="inputName">お名前</label>
                     </div>
                     <div class="col-9">
-                        <p class="display_item"></p>
+                        <p class="display_item"><?php echo htmlspecialchars($post['name']); ?></p>
                     </div>
                 </div>
             </div>
@@ -27,7 +62,7 @@
                         <label for="inputEmail">メールアドレス</label>
                     </div>
                     <div class="col-9">
-                        <p class="display_item"></p>
+                        <p class="display_item"><?php echo htmlspecialchars($post['email']); ?></p>
                     </div>
                 </div>
             </div>
@@ -37,7 +72,7 @@
                         <label for="inputContent">お問い合わせ内容</label>
                     </div>
                     <div class="col-9">
-                        <p class="display_item"></p>
+                        <p class="display_item"><?php echo nl2br(htmlspecialchars($post['contact'])); ?></p>
                     </div>
                 </div>
             </div>
